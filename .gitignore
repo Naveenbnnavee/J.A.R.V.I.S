@@ -1,0 +1,53 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Environment and sensitive keys
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+token.json
+client_secret.json
+drive_token.json
+
+# Build outputs
+dist/
+build/
+.next/
+out/
+target/
+src-tauri/target/
+
+# Python caches and virtual environments
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Large binaries, models and archives
+*.exe
+*.zip
+*.tar.gz
+*.iso
+*.pdb
+*.onnx
+*.ort
+*.dll
+binaries/
+backend/bin/
+chroma-server*.exe
+jarvis-backend*.exe
+
+# Databases and cache
+jarvis_memory_db/
+chroma_db/
+.wwebjs_cache/
+.wwebjs_auth/
+*.log
+
+# System files
+.DS_Store
+Thumbs.db
+.vscode/

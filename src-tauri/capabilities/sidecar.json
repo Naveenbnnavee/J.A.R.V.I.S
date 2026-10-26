@@ -1,0 +1,14 @@
+{
+  "identifier": "allow-sidecar",
+  "windows": ["*"],
+  "permissions": [
+    "shell:default",
+    {
+      "identifier": "shell:allow-execute",
+      "allow": [
+        { "name": "binaries/jarvis-backend", "sidecar": true },
+        { "name": "binaries/chroma-server", "sidecar": true, "args": ["run", "--path", "./jarvis_memory_db"] }
+      ]
+    }
+  ]
+}

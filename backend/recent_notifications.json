@@ -1,0 +1,68 @@
+[
+  {
+    "id": 1792768923085.4875,
+    "timestamp": 1792768923085,
+    "time": "8:52:03 pm",
+    "date": "23/10/2026",
+    "package": "com.digilocker.android",
+    "appName": "digilocker",
+    "title": "",
+    "text": "EPFO Pension Certificate now Live on DigiLocker: EPFO is LIVE on DigiLocker! Pensioners can now access their Pension Certificate anytime, anywhere. Now available to 80 Lakh+ pensioners.",
+    "type": "NOTIFICATION"
+  },
+  {
+    "id": 1792768767724.4238,
+    "timestamp": 1792768767724,
+    "time": "8:49:27 pm",
+    "date": "23/10/2026",
+    "package": "com.snapchat.android",
+    "appName": "Snapchat",
+    "title": "",
+    "text": "Updating messages…: ",
+    "type": "NOTIFICATION"
+  },
+  {
+    "id": 1792153140382.2366,
+    "timestamp": 1792153140382,
+    "time": "5:49:00 PM",
+    "date": "10/16/2026",
+    "package": "com.linkedin.android",
+    "appName": "linkedin",
+    "title": "",
+    "text": "Infosys Springboard: A new chapter in empowering Sikkim's youth begins! We are delighted to share that, on 7 October 2026, the Skill Development Department, Government of Sikkim, through DCTSE, signed an MoU with Infosys Springboard under the Sikkim INSPIRES initiative. The signing ceremony was graced by senior representatives from Infosys Ltd and the Government of Sikkim, including Mr. Santhosh Ananthapura, Associate Vice President, Infosys and Head, Infosys Springboard India & Government Partnerships, Mr. Tushar Gajanan Nikhare, IAS, Secretary-Skill Development Department, Mr. Samdup Bhutia, Special Secretary-cum-Director, Mr. Nikhil Sherpa, SCS Under Secretary, Mr. Arun Tamang, IT, Sikkim Skill Development Department, Government of Sikkim, Ayan Sengupta, Senior Business Consulting. This collaboration marks an important step toward expanding access to industry-relevant learning, certifications, virtual classrooms, assessments, and internship opportunities for learners across Sikkim. By bringing together government, industry, an",
+    "type": "NOTIFICATION"
+  },
+  {
+    "id": 1791815831162.2805,
+    "timestamp": 1791815831162,
+    "time": "8:07:11 pm",
+    "date": "12/10/2026",
+    "package": "com.google.android.gm",
+    "appName": "google.gm",
+    "title": "",
+    "text": "Internshala: Update: You've been invited: Air India Campus Ambassador Phase 2 - Confirm your spot now.",
+    "type": "NOTIFICATION"
+  },
+  {
+    "id": 1791615159667.2217,
+    "timestamp": 1791615159667,
+    "time": "12:22:39 pm",
+    "date": "10/10/2026",
+    "package": "com.google.android.dialer",
+    "appName": "Phone Call",
+    "title": "",
+    "text": "Dhanush DSU: Ongoing call",
+    "type": "CALL"
+  },
+  {
+    "id": 1791615159619.4954,
+    "timestamp": 1791615159619,
+    "time": "12:22:39 pm",
+    "date": "10/10/2026",
+    "package": "com.whatsapp",
+    "appName": "WhatsApp",
+    "title": "",
+    "text": "Dhanush DSU: Ha one studio member said",
+    "type": "NOTIFICATION"
+  }
+]

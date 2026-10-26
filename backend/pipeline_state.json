@@ -1,0 +1,11 @@
+{
+  "last_run_date": "2026-10-17",
+  "current_episode_index": 9,
+  "pending_review": false,
+  "pending_episode_path": null,
+  "review_started_at": null,
+  "current_title": null,
+  "youtube_pipeline_enabled": false,
+  "force_local_tts": false,
+  "status": "PENDING_REVIEW"
+}
