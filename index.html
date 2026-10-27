@@ -1,426 +1,1569 @@
 <!DOCTYPE html>
-<html lang="en" class="dark scroll-smooth">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>J.A.R.V.I.S. – Real-Time Conversational AI Assistant | Architectural Showcase</title>
-  <meta name="description" content="Production-grade local AI assistant orchestrating sub-second bidirectional voice streams, local LLM routing, and WebGL HUD visualizer.">
+  <title>J.A.R.V.I.S. – Autonomous Real-Time Voice Assistant | Architectural Showcase</title>
+  <meta name="description" content="Next-generation autonomous AI assistant orchestrating sub-second streaming voice VAD, local Ollama LLM routing, and real-time Arc Reactor HUD telemetry.">
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
   <link rel="shortcut icon" href="favicon.svg">
   <link rel="apple-touch-icon" href="favicon.svg">
-  <!-- Tailwind CSS CDN -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      darkMode: 'class',
-      theme: {
-        extend: {
-          colors: {
-            brand: {
-              cyan: '#06b6d4',
-              violet: '#8b5cf6',
-              dark: '#030712',
-              card: 'rgba(15, 23, 42, 0.75)',
-              border: 'rgba(56, 189, 248, 0.2)'
-            }
-          },
-          fontFamily: {
-            mono: ['JetBrains Mono', 'Fira Code', 'monospace']
-          }
-        }
-      }
-    }
-  </script>
+  
+  <!-- Futuristic Typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
   <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
+
   <style>
-    .glow-cyan {
-      box-shadow: 0 0 40px -10px rgba(6, 182, 212, 0.35);
+    :root {
+      --bg-void: #02040a;
+      --bg-panel: rgba(6, 12, 24, 0.78);
+      --bg-card: rgba(8, 16, 32, 0.65);
+      --stark-cyan: #00f0ff;
+      --stark-cyan-glow: rgba(0, 240, 255, 0.35);
+      --stark-amber: #ffb703;
+      --stark-amber-glow: rgba(255, 183, 3, 0.4);
+      --stark-crimson: #ff3b30;
+      --border-cyan: rgba(0, 240, 255, 0.22);
+      --border-glow: rgba(0, 240, 255, 0.45);
+      --text-main: #f0f6fc;
+      --text-muted: #8b9bb4;
+      --text-dim: #4d5d78;
+      --font-hud: 'Orbitron', -apple-system, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+      --font-body: 'Plus Jakarta Sans', sans-serif;
     }
-    .glass-panel {
-      background: rgba(15, 23, 42, 0.7);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      background-color: var(--bg-void);
+      color: var(--text-main);
+      font-family: var(--font-body);
+      overflow-x: hidden;
+    }
+
+    body {
+      min-height: 100vh;
+      background: radial-gradient(circle at 50% 0%, rgba(0, 240, 255, 0.08) 0%, transparent 60%),
+                  radial-gradient(circle at 80% 80%, rgba(255, 183, 3, 0.05) 0%, transparent 50%),
+                  var(--bg-void);
+      background-attachment: fixed;
+      position: relative;
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
+
+    /* Holographic Micro-Grid HUD Background */
+    .hud-grid-overlay {
+      position: fixed;
+      inset: 0;
+      background-image: 
+        linear-gradient(rgba(0, 240, 255, 0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 240, 255, 0.04) 1px, transparent 1px);
+      background-size: 36px 36px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* Scanning Scanline Effect */
+    .hud-scanline {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background: linear-gradient(90deg, transparent, rgba(0, 240, 255, 0.6), transparent);
+      box-shadow: 0 0 15px var(--stark-cyan);
+      animation: scanline-pass 8s linear infinite;
+      pointer-events: none;
+      z-index: 1;
+      opacity: 0.7;
+    }
+
+    @keyframes scanline-pass {
+      0% { top: -5%; opacity: 0; }
+      15% { opacity: 0.8; }
+      85% { opacity: 0.8; }
+      100% { top: 105%; opacity: 0; }
+    }
+
+    .container {
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 0 24px;
+      position: relative;
+      z-index: 2;
+    }
+
+    /* Navigation Bar */
+    .stark-navbar {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: rgba(2, 4, 10, 0.85);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border-cyan);
+      padding: 12px 0;
+    }
+
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .brand-wrap {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .brand-reactor-badge {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      background: rgba(0, 240, 255, 0.1);
+      border: 1px solid var(--stark-cyan);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 16px var(--stark-cyan-glow);
+      position: relative;
+    }
+
+    .brand-reactor-badge img {
+      width: 26px;
+      height: 26px;
+      object-fit: contain;
+      filter: drop-shadow(0 0 6px var(--stark-cyan));
+    }
+
+    .brand-title {
+      font-family: var(--font-hud);
+      font-weight: 800;
+      font-size: 1.25rem;
+      letter-spacing: 0.12em;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .brand-tag {
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      font-weight: 600;
+      color: var(--stark-cyan);
+      padding: 2px 8px;
+      border-radius: 4px;
+      background: rgba(0, 240, 255, 0.1);
+      border: 1px solid rgba(0, 240, 255, 0.3);
+      letter-spacing: 0.05em;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      font-size: 0.88rem;
+      font-family: var(--font-mono);
+    }
+
+    .nav-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: color 0.25s;
+    }
+
+    .nav-links a:hover {
+      color: var(--stark-cyan);
+    }
+
+    .launch-nav-btn {
+      background: linear-gradient(135deg, rgba(0, 240, 255, 0.2), rgba(0, 150, 255, 0.1));
+      border: 1px solid var(--stark-cyan);
+      color: #ffffff;
+      padding: 8px 18px;
+      border-radius: 6px;
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+      box-shadow: 0 0 15px var(--stark-cyan-glow);
+      transition: all 0.3s;
+    }
+
+    .launch-nav-btn:hover {
+      background: var(--stark-cyan);
+      color: #02040a;
+      box-shadow: 0 0 25px var(--stark-cyan);
+      transform: translateY(-2px);
+    }
+
+    /* Hero Section */
+    .hero-section {
+      padding: 60px 0 70px 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 50px;
+      flex-wrap: wrap;
+    }
+
+    .hero-info {
+      flex: 1;
+      min-width: 320px;
+      max-width: 660px;
+    }
+
+    .sys-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 6px 14px;
+      border-radius: 4px;
+      background: rgba(0, 240, 255, 0.08);
+      border: 1px solid var(--border-cyan);
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--stark-cyan);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+
+    .pulse-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--stark-cyan);
+      box-shadow: 0 0 10px var(--stark-cyan);
+      animation: pulse-dot 1.8s infinite;
+    }
+
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.85); }
+    }
+
+    .hero-title {
+      font-family: var(--font-hud);
+      font-size: clamp(2.4rem, 4.8vw, 3.8rem);
+      font-weight: 900;
+      line-height: 1.15;
+      color: #ffffff;
+      margin-bottom: 20px;
+      letter-spacing: -0.02em;
+    }
+
+    .cyan-glow-text {
+      background: linear-gradient(135deg, #ffffff 0%, var(--stark-cyan) 60%, #0099ff 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 0 30px var(--stark-cyan-glow);
+    }
+
+    .hero-desc {
+      font-size: 1.05rem;
+      color: var(--text-muted);
+      line-height: 1.75;
+      margin-bottom: 28px;
+    }
+
+    .highlight-bold {
+      color: #ffffff;
+      font-weight: 600;
+    }
+
+    /* Telemetry HUD Mini Strip */
+    .hud-telemetry-box {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 12px;
+      padding: 16px;
+      border-radius: 8px;
+      background: var(--bg-panel);
+      border: 1px solid var(--border-cyan);
+      margin-bottom: 30px;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+    }
+
+    .telemetry-cell {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .telemetry-tag {
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .telemetry-data {
+      font-family: var(--font-mono);
+      font-size: 0.92rem;
+      font-weight: 700;
+      color: var(--stark-cyan);
+    }
+
+    .tech-pills-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .tech-chip {
+      background: rgba(255, 255, 255, 0.03);
       border: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 5px 12px;
+      border-radius: 4px;
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      transition: all 0.25s;
     }
-    .glass-panel:hover {
-      border-color: rgba(6, 182, 212, 0.4);
+
+    .tech-chip:hover {
+      border-color: var(--stark-cyan);
+      color: var(--stark-cyan);
+      background: rgba(0, 240, 255, 0.05);
     }
-    .neon-text {
-      text-shadow: 0 0 20px rgba(6, 182, 212, 0.5);
+
+    /* THE HERO VISUAL: Concentric Holographic Arc Reactor */
+    .hero-visual-stage {
+      flex: 1;
+      min-width: 320px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
-    .grid-bg {
-      background-image: radial-gradient(rgba(56, 189, 248, 0.1) 1px, transparent 1px);
-      background-size: 32px 32px;
+
+    .arc-reactor-stage {
+      position: relative;
+      width: 380px;
+      height: 380px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(circle, rgba(0, 240, 255, 0.12) 0%, rgba(2, 4, 10, 0.8) 70%);
+      border-radius: 50%;
+      border: 1px solid rgba(0, 240, 255, 0.2);
+      box-shadow: 0 0 60px rgba(0, 240, 255, 0.2), inset 0 0 50px rgba(0, 240, 255, 0.1);
+      cursor: pointer;
+      user-select: none;
+      transition: transform 0.4s ease;
+    }
+
+    .arc-reactor-stage:hover {
+      transform: scale(1.03);
+    }
+
+    /* Outer Degree Ring (360 deg) */
+    .hud-outer-ring {
+      position: absolute;
+      width: 350px;
+      height: 350px;
+      border-radius: 50%;
+      border: 1.5px dashed rgba(0, 240, 255, 0.3);
+      animation: rotate-cw 40s linear infinite;
+    }
+
+    /* Middle Calibration Ring */
+    .hud-middle-ring {
+      position: absolute;
+      width: 290px;
+      height: 290px;
+      border-radius: 50%;
+      border: 1px solid rgba(0, 240, 255, 0.4);
+      animation: rotate-ccw 25s linear infinite;
+    }
+
+    /* 12 Coils Ring */
+    .hud-coils-ring {
+      position: absolute;
+      width: 240px;
+      height: 240px;
+      border-radius: 50%;
+      border: 2px dashed rgba(255, 183, 3, 0.4);
+      animation: rotate-cw 15s linear infinite;
+    }
+
+    @keyframes rotate-cw {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    @keyframes rotate-ccw {
+      from { transform: rotate(360deg); }
+      to { transform: rotate(0deg); }
+    }
+
+    /* Inner Glowing Core */
+    .arc-plasma-core {
+      position: relative;
+      width: 140px;
+      height: 140px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #ffffff 0%, var(--stark-cyan) 50%, rgba(0, 240, 255, 0.2) 100%);
+      box-shadow: 0 0 50px var(--stark-cyan), 0 0 100px var(--stark-cyan-glow);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.5s ease;
+      animation: plasma-breathe 4s ease-in-out infinite alternate;
+    }
+
+    @keyframes plasma-breathe {
+      0% { transform: scale(0.96); box-shadow: 0 0 40px var(--stark-cyan); }
+      100% { transform: scale(1.05); box-shadow: 0 0 65px var(--stark-cyan), 0 0 110px var(--stark-cyan-glow); }
+    }
+
+    .arc-inner-metal {
+      width: 90px;
+      height: 90px;
+      border-radius: 50%;
+      background: #02040a;
+      border: 3px solid var(--stark-cyan);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      box-shadow: inset 0 0 15px var(--stark-cyan);
+    }
+
+    .arc-inner-metal span {
+      font-family: var(--font-hud);
+      font-size: 0.72rem;
+      font-weight: 800;
+      color: #ffffff;
+      letter-spacing: 0.1em;
+    }
+
+    .arc-inner-metal small {
+      font-family: var(--font-mono);
+      font-size: 0.58rem;
+      color: var(--stark-cyan);
+    }
+
+    /* Soundwave Simulation Canvas / Waveform Bar */
+    .voice-wave-container {
+      position: absolute;
+      bottom: 25px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      height: 24px;
+      z-index: 5;
+    }
+
+    .wave-bar {
+      width: 3px;
+      border-radius: 2px;
+      background: var(--stark-cyan);
+      box-shadow: 0 0 6px var(--stark-cyan);
+      animation: wave-bounce 1.2s ease-in-out infinite alternate;
+    }
+
+    .wave-bar:nth-child(1) { height: 6px; animation-delay: 0.1s; }
+    .wave-bar:nth-child(2) { height: 14px; animation-delay: 0.25s; }
+    .wave-bar:nth-child(3) { height: 22px; animation-delay: 0.4s; }
+    .wave-bar:nth-child(4) { height: 16px; animation-delay: 0.15s; }
+    .wave-bar:nth-child(5) { height: 8px; animation-delay: 0.3s; }
+    .wave-bar:nth-child(6) { height: 18px; animation-delay: 0.5s; }
+    .wave-bar:nth-child(7) { height: 10px; animation-delay: 0.2s; }
+
+    @keyframes wave-bounce {
+      0% { transform: scaleY(0.4); opacity: 0.5; }
+      100% { transform: scaleY(1.4); opacity: 1; }
+    }
+
+    /* Interactive Voice Mode Switch Note */
+    .interactive-hint {
+      position: absolute;
+      top: 15px;
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      color: var(--stark-cyan);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      background: rgba(0, 240, 255, 0.1);
+      padding: 3px 8px;
+      border-radius: 12px;
+      border: 1px solid rgba(0, 240, 255, 0.3);
+    }
+
+    /* SECTION 1: SYSTEM INVARIANTS & METRICS */
+    .section-wrap {
+      padding: 60px 0;
+    }
+
+    .section-header {
+      text-align: center;
+      margin-bottom: 45px;
+    }
+
+    .section-header h2 {
+      font-family: var(--font-hud);
+      font-size: 2.2rem;
+      font-weight: 800;
+      letter-spacing: -0.01em;
+      color: #ffffff;
+      margin-bottom: 12px;
+    }
+
+    .section-header p {
+      font-size: 1rem;
+      color: var(--text-muted);
+      max-width: 650px;
+      margin: 0 auto;
+    }
+
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 20px;
+    }
+
+    .metric-panel {
+      background: var(--bg-card);
+      border: 1px solid var(--border-cyan);
+      border-radius: 12px;
+      padding: 28px 24px;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.3s;
+      backdrop-filter: blur(16px);
+    }
+
+    .metric-panel:hover {
+      transform: translateY(-4px);
+      border-color: var(--stark-cyan);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), 0 0 20px var(--stark-cyan-glow);
+    }
+
+    .metric-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+
+    .metric-icon-wrap {
+      width: 40px;
+      height: 40px;
+      border-radius: 8px;
+      background: rgba(0, 240, 255, 0.1);
+      border: 1px solid var(--border-cyan);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--stark-cyan);
+    }
+
+    .metric-stat {
+      font-family: var(--font-hud);
+      font-size: 2.3rem;
+      font-weight: 800;
+      color: #ffffff;
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+
+    .metric-name {
+      font-family: var(--font-mono);
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--stark-cyan);
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .metric-detail {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    /* SECTION 2: SPECIALIZED AUTONOMOUS AGENTS */
+    .agents-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 24px;
+    }
+
+    .agent-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-cyan);
+      border-radius: 12px;
+      padding: 28px;
+      position: relative;
+      transition: all 0.3s;
+    }
+
+    .agent-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--stark-cyan);
+      background: rgba(10, 20, 40, 0.85);
+      box-shadow: 0 12px 35px rgba(0, 0, 0, 0.5), 0 0 15px rgba(0, 240, 255, 0.2);
+    }
+
+    .agent-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 16px;
+    }
+
+    .agent-icon-box {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      background: rgba(0, 240, 255, 0.1);
+      border: 1px solid var(--border-cyan);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      color: var(--stark-cyan);
+    }
+
+    .agent-title {
+      font-family: var(--font-hud);
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #ffffff;
+      letter-spacing: 0.05em;
+    }
+
+    .agent-badge {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      color: var(--stark-amber);
+      background: rgba(255, 183, 3, 0.1);
+      border: 1px solid rgba(255, 183, 3, 0.3);
+      padding: 2px 6px;
+      border-radius: 3px;
+    }
+
+    .agent-desc {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      line-height: 1.65;
+      margin-bottom: 16px;
+    }
+
+    .agent-caps {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .cap-tag {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: var(--stark-cyan);
+      background: rgba(0, 240, 255, 0.05);
+      border: 1px solid rgba(0, 240, 255, 0.15);
+      padding: 3px 8px;
+      border-radius: 4px;
+    }
+
+    /* SECTION 3: REAL-TIME ARCHITECTURE WATERFALL */
+    .flow-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      margin-bottom: 40px;
+    }
+
+    .flow-step {
+      background: var(--bg-card);
+      border: 1px solid var(--border-cyan);
+      border-radius: 10px;
+      padding: 22px;
+      position: relative;
+    }
+
+    .flow-num {
+      font-family: var(--font-hud);
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: rgba(0, 240, 255, 0.25);
+      margin-bottom: 8px;
+    }
+
+    .flow-step h4 {
+      font-family: var(--font-hud);
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #ffffff;
+      margin-bottom: 8px;
+    }
+
+    .flow-step p {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    /* SECTION 4: REAL SCREENSHOT INSPECTOR */
+    .screens-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 24px;
+    }
+
+    .screen-item {
+      background: var(--bg-card);
+      border: 1px solid var(--border-cyan);
+      border-radius: 12px;
+      padding: 14px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .screen-item:hover {
+      transform: translateY(-4px);
+      border-color: var(--stark-cyan);
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6), 0 0 20px var(--stark-cyan-glow);
+    }
+
+    .screen-img-box {
+      border-radius: 8px;
+      overflow: hidden;
+      aspect-ratio: 16 / 9;
+      background: #02040a;
+      position: relative;
+      margin-bottom: 14px;
+    }
+
+    .screen-img-box img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.5s;
+    }
+
+    .screen-item:hover .screen-img-box img {
+      transform: scale(1.05);
+    }
+
+    .screen-badge {
+      position: absolute;
+      bottom: 8px;
+      left: 8px;
+      background: rgba(2, 4, 10, 0.85);
+      border: 1px solid var(--border-cyan);
+      color: var(--stark-cyan);
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      padding: 3px 8px;
+      border-radius: 4px;
+    }
+
+    .screen-item h4 {
+      font-family: var(--font-hud);
+      font-size: 1rem;
+      color: #ffffff;
+      margin-bottom: 6px;
+    }
+
+    .screen-item p {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    /* FINAL LAUNCH SECTION (At the very end of the portfolio page) */
+    .final-launch-section {
+      margin-top: 80px;
+      padding: 60px 40px;
+      border-radius: 16px;
+      background: radial-gradient(circle at 50% 0%, rgba(0, 240, 255, 0.18) 0%, rgba(6, 12, 24, 0.95) 75%);
+      border: 1px solid var(--stark-cyan);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7), 0 0 35px var(--stark-cyan-glow);
+    }
+
+    .final-launch-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      border-radius: 4px;
+      background: rgba(0, 240, 255, 0.1);
+      border: 1px solid var(--stark-cyan);
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--stark-cyan);
+      text-transform: uppercase;
+      margin-bottom: 18px;
+    }
+
+    .final-launch-title {
+      font-family: var(--font-hud);
+      font-size: clamp(2rem, 4vw, 3.2rem);
+      font-weight: 900;
+      color: #ffffff;
+      margin-bottom: 16px;
+      letter-spacing: -0.01em;
+    }
+
+    .final-launch-desc {
+      font-size: 1.05rem;
+      color: var(--text-muted);
+      max-width: 680px;
+      margin: 0 auto 36px auto;
+      line-height: 1.7;
+    }
+
+    .final-launch-buttons {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+      flex-wrap: wrap;
+      margin-bottom: 35px;
+    }
+
+    .primary-stark-btn {
+      background: linear-gradient(135deg, var(--stark-cyan) 0%, #0099ff 100%);
+      color: #02040a;
+      padding: 16px 36px;
+      border-radius: 8px;
+      font-family: var(--font-hud);
+      font-size: 1rem;
+      font-weight: 800;
+      letter-spacing: 0.05em;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      box-shadow: 0 0 30px var(--stark-cyan-glow);
+      transition: all 0.3s;
+    }
+
+    .primary-stark-btn:hover {
+      transform: translateY(-3px) scale(1.02);
+      box-shadow: 0 0 45px var(--stark-cyan);
+    }
+
+    .secondary-stark-btn {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-cyan);
+      color: var(--text-main);
+      padding: 16px 30px;
+      border-radius: 8px;
+      font-family: var(--font-mono);
+      font-size: 0.92rem;
+      font-weight: 600;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      transition: all 0.3s;
+    }
+
+    .secondary-stark-btn:hover {
+      border-color: var(--stark-cyan);
+      color: var(--stark-cyan);
+      background: rgba(0, 240, 255, 0.08);
+      transform: translateY(-2px);
+    }
+
+    .terminal-quickstart-box {
+      max-width: 620px;
+      margin: 0 auto;
+      background: rgba(2, 4, 10, 0.9);
+      border: 1px solid var(--border-cyan);
+      border-radius: 8px;
+      padding: 14px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      color: var(--stark-cyan);
+      text-align: left;
+    }
+
+    .copy-icon-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-dim);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      padding: 4px;
+      border-radius: 4px;
+      transition: color 0.2s;
+    }
+
+    .copy-icon-btn:hover {
+      color: var(--stark-cyan);
+    }
+
+    /* Footer */
+    .stark-footer {
+      margin-top: 60px;
+      padding: 30px 0;
+      border-top: 1px solid rgba(0, 240, 255, 0.15);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      align-items: center;
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      color: var(--text-dim);
+      text-align: center;
+    }
+
+    .footer-highlight {
+      color: var(--stark-cyan);
+    }
+
+    /* Lightbox Modal */
+    #lightbox {
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      background: rgba(2, 4, 10, 0.95);
+      backdrop-filter: blur(20px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    #lightbox.active {
+      display: flex;
+    }
+
+    .lightbox-window {
+      max-width: 90vw;
+      max-height: 90vh;
+      background: var(--bg-panel);
+      border: 1px solid var(--stark-cyan);
+      border-radius: 12px;
+      box-shadow: 0 0 50px var(--stark-cyan-glow);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .lightbox-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 18px;
+      background: rgba(0, 0, 0, 0.6);
+      border-bottom: 1px solid var(--border-cyan);
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      color: var(--stark-cyan);
+    }
+
+    .lightbox-close-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+    }
+
+    .lightbox-close-btn:hover {
+      color: #ffffff;
+    }
+
+    .lightbox-body {
+      padding: 12px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .lightbox-body img {
+      max-width: 85vw;
+      max-height: 75vh;
+      object-fit: contain;
+      border-radius: 6px;
+    }
+
+    /* Toast */
+    #toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 2000;
+      background: rgba(6, 12, 24, 0.95);
+      border: 1px solid var(--stark-cyan);
+      color: #ffffff;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-family: var(--font-mono);
+      font-size: 0.82rem;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8), 0 0 15px var(--stark-cyan-glow);
+      transform: translateY(100px);
+      opacity: 0;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    #toast.active {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    @media (max-width: 768px) {
+      .hero-section {
+        flex-direction: column;
+        text-align: center;
+        padding: 30px 0;
+      }
+      .sys-pill {
+        margin: 0 auto 16px auto;
+      }
+      .tech-pills-row {
+        justify-content: center;
+      }
+      .arc-reactor-stage {
+        width: 320px;
+        height: 320px;
+      }
+      .hud-outer-ring {
+        width: 295px;
+        height: 295px;
+      }
+      .hud-middle-ring {
+        width: 245px;
+        height: 245px;
+      }
+      .final-launch-section {
+        padding: 40px 20px;
+      }
     }
   </style>
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen selection:bg-cyan-500/30 selection:text-cyan-200 grid-bg relative overflow-x-hidden font-sans">
+<body>
 
-  <!-- Ambient Light Orbs -->
-  <div class="fixed top-0 left-1/4 w-96 h-96 bg-cyan-600/10 rounded-full blur-3xl pointer-events-none" aria-hidden="true"></div>
-  <div class="fixed bottom-10 right-10 w-96 h-96 bg-violet-600/10 rounded-full blur-3xl pointer-events-none" aria-hidden="true"></div>
+  <!-- Background HUD & Scanline Overlays -->
+  <div class="hud-grid-overlay" aria-hidden="true"></div>
+  <div class="hud-scanline" aria-hidden="true"></div>
 
-  <!-- Navigation Bar -->
-  <header class="sticky top-0 z-40 border-b border-slate-800/80 bg-slate-950/80 backdrop-blur-md">
-    <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-      <div class="flex items-center gap-3">
-        <div class="w-9 h-9 rounded-lg bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center p-1.5 shadow-[0_0_15px_rgba(6,182,212,0.25)]">
-          <img src="favicon.svg" alt="J.A.R.V.I.S. Arc Reactor" class="w-full h-full object-contain filter drop-shadow-[0_0_6px_rgba(6,182,212,0.6)]">
+  <!-- Stark Navigation Bar -->
+  <nav class="stark-navbar">
+    <div class="container nav-inner">
+      <div class="brand-wrap" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
+        <div class="brand-reactor-badge">
+          <img src="favicon.svg" alt="J.A.R.V.I.S. Arc Reactor Core">
         </div>
-        <div>
-          <span class="font-bold tracking-wider text-slate-100">J.A.R.V.I.S.</span>
-          <span class="text-xs text-cyan-400 ml-2 font-mono px-2 py-0.5 rounded-full bg-cyan-950/60 border border-cyan-800">v2.4-LOCAL</span>
+        <div class="brand-title">
+          <span>J.A.R.V.I.S.</span>
+          <span class="brand-tag">v2.4-LOCAL</span>
         </div>
       </div>
-      <div class="flex items-center gap-4 text-sm font-medium">
-        <a href="#metrics" class="text-slate-400 hover:text-cyan-400 transition-colors">Metrics</a>
-        <a href="#screenshots" class="text-slate-400 hover:text-cyan-400 transition-colors">UI Gallery</a>
-        <a href="#architecture" class="text-slate-400 hover:text-cyan-400 transition-colors">Architecture</a>
-        <a href="#quickstart" class="px-3 py-1.5 rounded-md bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 hover:bg-cyan-500/20 transition-all font-mono text-xs">
-          Terminal Setup
+
+      <div class="nav-links">
+        <a href="#metrics">Telemetry</a>
+        <a href="#agents">Agents</a>
+        <a href="#architecture">Architecture</a>
+        <a href="#screenshots">Screenshots</a>
+        <a href="/desktop.html" class="launch-nav-btn">
+          <i data-lucide="power" style="width: 14px; height: 14px;"></i>
+          <span>Launch HUD →</span>
         </a>
       </div>
     </div>
-  </header>
+  </nav>
 
-  <main class="max-w-7xl mx-auto px-6 pt-12 pb-24 space-y-20">
+  <main class="container">
 
-    <!-- Hero Section -->
-    <section class="text-center max-w-4xl mx-auto space-y-6 pt-8">
-      <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-cyan-950/50 border border-cyan-700/50 text-cyan-300 text-xs font-semibold tracking-wide uppercase">
-        <i data-lucide="cpu" class="w-3.5 h-3.5 text-cyan-400"></i>
-        <span>AI/ML & Systems | Desktop App</span>
+    <!-- HERO SECTION -->
+    <section class="hero-section">
+      <div class="hero-info">
+        <div class="sys-pill">
+          <span class="pulse-dot"></span>
+          <span>AUTONOMOUS NEURAL AGENT // TAURI 2.0 & LOCAL LLM</span>
+        </div>
+
+        <h1 class="hero-title">
+          J.A.R.V.I.S. – Real-Time <br />
+          <span class="cyan-glow-text">Conversational AI</span> Assistant.
+        </h1>
+
+        <p class="hero-desc">
+          A desktop-grade autonomous intelligence suite orchestrating <strong class="highlight-bold">sub-second streaming voice turnarounds</strong>, <strong class="highlight-bold">dual-brain LLM routing (local Ollama 3.2 + cloud Gemini failover)</strong>, and a hardware-accelerated <strong class="highlight-bold">60fps Arc Reactor HUD</strong> with complete local data sovereignty.
+        </p>
+
+        <!-- Live Telemetry Box -->
+        <div class="hud-telemetry-box">
+          <div class="telemetry-cell">
+            <span class="telemetry-tag">Voice Latency</span>
+            <span class="telemetry-data">&lt; 180ms</span>
+          </div>
+          <div class="telemetry-cell">
+            <span class="telemetry-tag">Local LLM</span>
+            <span class="telemetry-data">Llama 3.2 (3B)</span>
+          </div>
+          <div class="telemetry-cell">
+            <span class="telemetry-tag">VAD Engine</span>
+            <span class="telemetry-data">Silero ONNX</span>
+          </div>
+          <div class="telemetry-cell">
+            <span class="telemetry-tag">Data Leakage</span>
+            <span class="telemetry-data" style="color: #00ffaa;">0% Local</span>
+          </div>
+        </div>
+
+        <!-- System Tech Pills -->
+        <div class="tech-pills-row">
+          <span class="tech-chip">🦀 Rust & Tauri 2.0</span>
+          <span class="tech-chip">⚡ React 19 + TypeScript</span>
+          <span class="tech-chip">🎙️ Faster-Whisper STT</span>
+          <span class="tech-chip">🧠 Dual Hybrid LLM Router</span>
+          <span class="tech-chip">🔊 Coqui / Piper Neural TTS</span>
+          <span class="tech-chip">📱 Mobile Companion Bridge</span>
+        </div>
       </div>
 
-      <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white leading-tight">
-        J.A.R.V.I.S. – Real-Time <br />
-        <span class="bg-gradient-to-r from-cyan-400 via-sky-300 to-violet-400 bg-clip-text text-transparent neon-text">
-          Conversational AI Assistant
-        </span>
-      </h1>
+      <!-- HERO VISUAL: Authentic Arc Reactor with Voice Waveform -->
+      <div class="hero-visual-stage">
+        <div class="arc-reactor-stage" id="reactor-core-el" onclick="toggleReactorState()" title="Click to test Voice/Listening State">
+          <div class="interactive-hint">Tap Core to Toggle Voice State</div>
 
-      <p class="text-lg text-slate-300 leading-relaxed max-w-3xl mx-auto">
-        Ultra-low latency conversational agent orchestrating bidirectional audio streams, dynamic local/cloud LLM routing, and a synchronized WebGL visualizer canvas with zero server egress for confidential tasks.
+          <!-- Outer 360-deg Orbit Ring -->
+          <div class="hud-outer-ring"></div>
+          <!-- Middle Calibration Ring -->
+          <div class="hud-middle-ring"></div>
+          <!-- 12 Magnetic Induction Coils -->
+          <div class="hud-coils-ring"></div>
+
+          <!-- Pulsing Plasma Core -->
+          <div class="arc-plasma-core" id="plasma-core-el">
+            <div class="arc-inner-metal">
+              <span id="core-state-text">ONLINE</span>
+              <small id="core-mode-text">STANDBY</small>
+            </div>
+          </div>
+
+          <!-- Real-Time Voice Waveform Simulator -->
+          <div class="voice-wave-container">
+            <div class="wave-bar"></div>
+            <div class="wave-bar"></div>
+            <div class="wave-bar"></div>
+            <div class="wave-bar"></div>
+            <div class="wave-bar"></div>
+            <div class="wave-bar"></div>
+            <div class="wave-bar"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 1: SYSTEM INVARIANTS & TELEMETRY BENCHMARKS -->
+    <section id="metrics" class="section-wrap">
+      <div class="section-header">
+        <h2>Sub-System Telemetry & Benchmarks</h2>
+        <p>Engineered for deterministic sub-second responsiveness without reliance on persistent cloud connectivity.</p>
+      </div>
+
+      <div class="metrics-grid">
+        <div class="metric-panel">
+          <div class="metric-top">
+            <span class="metric-name">Turnaround Latency</span>
+            <div class="metric-icon-wrap"><i data-lucide="zap" style="width: 20px; height: 20px;"></i></div>
+          </div>
+          <div class="metric-stat">&lt; 1.2s</div>
+          <p class="metric-detail">Complete end-to-end audio loop: Silero VAD detection &rarr; chunked token streaming &rarr; immediate TTS phoneme playback.</p>
+        </div>
+
+        <div class="metric-panel">
+          <div class="metric-top">
+            <span class="metric-name">Local LLM Inference</span>
+            <div class="metric-icon-wrap"><i data-lucide="cpu" style="width: 20px; height: 20px;"></i></div>
+          </div>
+          <div class="metric-stat">65 tps</div>
+          <p class="metric-detail">On-device quantization executing Llama-3.2-3B via Ollama. Instantaneous offline intent routing and command parsing.</p>
+        </div>
+
+        <div class="metric-panel">
+          <div class="metric-top">
+            <span class="metric-name">Hardware Security</span>
+            <div class="metric-icon-wrap"><i data-lucide="shield-check" style="width: 20px; height: 20px;"></i></div>
+          </div>
+          <div class="metric-stat">100% Local</div>
+          <p class="metric-detail">Sandboxed local IPC communication. Sensitive developer files and voice audio buffers never leave local workstation RAM.</p>
+        </div>
+
+        <div class="metric-panel">
+          <div class="metric-top">
+            <span class="metric-name">Display Acceleration</span>
+            <div class="metric-icon-wrap"><i data-lucide="activity" style="width: 20px; height: 20px;"></i></div>
+          </div>
+          <div class="metric-stat">60 FPS</div>
+          <p class="metric-detail">Hardware-accelerated reactive Arc-Reactor visualizer shader loop running smoothly across multi-monitor setups.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 2: SPECIALIZED AUTONOMOUS SUB-AGENTS -->
+    <section id="agents" class="section-wrap">
+      <div class="section-header">
+        <h2>Autonomous Agent Ecosystem</h2>
+        <p>J.A.R.V.I.S. delegates intents across specialized local sub-agents to execute real operating system commands.</p>
+      </div>
+
+      <div class="agents-grid">
+        <!-- Developer Agent -->
+        <div class="agent-card">
+          <div class="agent-header">
+            <div class="agent-icon-box">💻</div>
+            <div>
+              <div class="agent-title">Developer Agent</div>
+              <span class="agent-badge">TIER-1 CORE</span>
+            </div>
+          </div>
+          <p class="agent-desc">
+            Directly executes terminal commands, orchestrates Git branches, generates patch diffs, and inspects build pipelines via sandboxed IPC.
+          </p>
+          <div class="agent-caps">
+            <span class="cap-tag">Shell Execution</span>
+            <span class="cap-tag">Git Automation</span>
+            <span class="cap-tag">Diagnostics</span>
+          </div>
+        </div>
+
+        <!-- Archivist Agent -->
+        <div class="agent-card">
+          <div class="agent-header">
+            <div class="agent-icon-box">🗄️</div>
+            <div>
+              <div class="agent-title">Memory Archivist</div>
+              <span class="agent-badge">VECTOR RAG</span>
+            </div>
+          </div>
+          <p class="agent-desc">
+            Persistent cosine similarity memory index. Retains project context, user preferences, and conversation history across system restarts.
+          </p>
+          <div class="agent-caps">
+            <span class="cap-tag">ChromaDB</span>
+            <span class="cap-tag">FastEmbed 384D</span>
+            <span class="cap-tag">Zero Disk Leaks</span>
+          </div>
+        </div>
+
+        <!-- Web Intelligence -->
+        <div class="agent-card">
+          <div class="agent-header">
+            <div class="agent-icon-box">🌐</div>
+            <div>
+              <div class="agent-title">Web Intelligence</div>
+              <span class="agent-badge">LIVE RECON</span>
+            </div>
+          </div>
+          <p class="agent-desc">
+            Automated live search querying Tavily and DuckDuckGo API endpoints. Ingests documentation and summarizes live web data on voice demand.
+          </p>
+          <div class="agent-caps">
+            <span class="cap-tag">Real-Time Search</span>
+            <span class="cap-tag">Doc Scraping</span>
+            <span class="cap-tag">Fact Extraction</span>
+          </div>
+        </div>
+
+        <!-- Mobile Companion -->
+        <div class="agent-card">
+          <div class="agent-header">
+            <div class="agent-icon-box">📱</div>
+            <div>
+              <div class="agent-title">Mobile Companion</div>
+              <span class="agent-badge">ENCRYPTED BRIDGE</span>
+            </div>
+          </div>
+          <p class="agent-desc">
+            Connects mobile devices via secure WebSocket tunnel. Allows remote voice commands, WhatsApp notification dispatch, and away-from-desk monitoring.
+          </p>
+          <div class="agent-caps">
+            <span class="cap-tag">WebSocket Tunnel</span>
+            <span class="cap-tag">WhatsApp API</span>
+            <span class="cap-tag">Remote Audio</span>
+          </div>
+        </div>
+
+        <!-- System Diagnostics -->
+        <div class="agent-card">
+          <div class="agent-header">
+            <div class="agent-icon-box">🩺</div>
+            <div>
+              <div class="agent-title">Hardware Diagnostics</div>
+              <span class="agent-badge">TELEMETRY</span>
+            </div>
+          </div>
+          <p class="agent-desc">
+            Monitors CPU/GPU core temperatures, RAM allocation, process tables, and active network ports. Proactively flags thermal throttling.
+          </p>
+          <div class="agent-caps">
+            <span class="cap-tag">Thermal Throttling</span>
+            <span class="cap-tag">RAM Watchdog</span>
+            <span class="cap-tag">Sysinfo Rust</span>
+          </div>
+        </div>
+
+        <!-- Quantitative Reasoning -->
+        <div class="agent-card">
+          <div class="agent-header">
+            <div class="agent-icon-box">📈</div>
+            <div>
+              <div class="agent-title">Quantitative Analyst</div>
+              <span class="agent-badge">HEURISTIC</span>
+            </div>
+          </div>
+          <p class="agent-desc">
+            Executes multi-step mathematical decomposition, financial ticker monitoring, and structured algorithm design for complex developer inquiries.
+          </p>
+          <div class="agent-caps">
+            <span class="cap-tag">Step-by-Step Chain</span>
+            <span class="cap-tag">Finance Scraping</span>
+            <span class="cap-tag">Deterministic Math</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 3: STEP-BY-STEP STREAMING AUDIO PIPELINE -->
+    <section id="architecture" class="section-wrap">
+      <div class="section-header">
+        <h2>End-to-End Voice Architecture</h2>
+        <p>How J.A.R.V.I.S. achieves instantaneous voice dialogue through modular asynchronous streaming stages.</p>
+      </div>
+
+      <div class="flow-grid">
+        <div class="flow-step">
+          <div class="flow-num">01</div>
+          <h4>Silero VAD Buffer</h4>
+          <p>Continuous 16kHz PCM ring buffer in Rust. Analyzes speech probability every 30ms, activating on speech and stopping after 350ms silence.</p>
+        </div>
+
+        <div class="flow-step">
+          <div class="flow-num">02</div>
+          <h4>Faster-Whisper STT</h4>
+          <p>Streams raw audio chunks into optimized CTranslate2 Whisper model. Generates hypothesis tokens with interim punctuation repair.</p>
+        </div>
+
+        <div class="flow-step">
+          <div class="flow-num">03</div>
+          <h4>Hybrid Intent Router</h4>
+          <p>Local heuristic analyzer determines whether query requires local execution (Ollama) or complex reasoning (Gemini Flash).</p>
+        </div>
+
+        <div class="flow-step">
+          <div class="flow-num">04</div>
+          <h4>Chunked Neural TTS</h4>
+          <p>Synthesizes sentence fragments immediately upon first token arrival, streaming audio buffers back to speaker before LLM finishes completion.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 4: REAL DESKTOP APPLICATION SCREENSHOTS -->
+    <section id="screenshots" class="section-wrap">
+      <div class="section-header">
+        <h2>Desktop Application Telemetry & Screenshots</h2>
+        <p>Verified visual inspection of J.A.R.V.I.S. running in production on local workstations. Tap any view to inspect full resolution.</p>
+      </div>
+
+      <div class="screens-grid">
+        <!-- Screenshot 1 -->
+        <div class="screen-item" onclick="openLightbox('assets/screenshots/jarvis_visualizer_idle.png', 'Spatial Radial Arc-Reactor HUD & Idle State')">
+          <div class="screen-img-box">
+            <img src="assets/screenshots/jarvis_visualizer_idle.png" alt="Spatial Radial Arc-Reactor HUD & Idle State" loading="lazy">
+            <span class="screen-badge">Radial Arc Reactor HUD</span>
+          </div>
+          <h4>Audio Visualizer & Idle State</h4>
+          <p>Real-time spatial radial HUD monitoring system thermals, network latency, and memory footprint.</p>
+        </div>
+
+        <!-- Screenshot 2 -->
+        <div class="screen-item" onclick="openLightbox('assets/screenshots/jarvis_streaming_voice.png', 'Streaming Voice Dialogue & Latency Waterfall')">
+          <div class="screen-img-box">
+            <img src="assets/screenshots/jarvis_streaming_voice.png" alt="Streaming Voice Dialogue & Latency Waterfall" loading="lazy">
+            <span class="screen-badge">Live Dialogue Stream</span>
+          </div>
+          <h4>Streaming Voice Dialogue Mode</h4>
+          <p>Chunked bidirectional audio loop with integrated live chat fallback & memory retrieval.</p>
+        </div>
+
+        <!-- Screenshot 3 -->
+        <div class="screen-item" onclick="openLightbox('assets/screenshots/jarvis_intent_routing.png', 'Dynamic Intent Routing Dashboard & Pipeline Drawer')">
+          <div class="screen-img-box">
+            <img src="assets/screenshots/jarvis_intent_routing.png" alt="Dynamic Intent Routing Dashboard & Pipeline Drawer" loading="lazy">
+            <span class="screen-badge">Sub-Agent Dispatch</span>
+          </div>
+          <h4>Dynamic Intent Routing Drawer</h4>
+          <p>Drawer telemetry exposing automated intent dispatch, YouTube automation, and local tool pipelines.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- FINAL SECTION: The Project Launch Button (Placed at the very end of the portfolio page) -->
+    <section class="final-launch-section">
+      <div class="final-launch-badge">
+        <i data-lucide="terminal" style="width: 14px; height: 14px;"></i>
+        <span>TACTICAL LAUNCH INTERFACE</span>
+      </div>
+
+      <h2 class="final-launch-title">Deploy & Experience J.A.R.V.I.S.</h2>
+      <p class="final-launch-desc">
+        Launch the live browser build of the desktop neural console, or clone the Tauri repository to run full native hardware-accelerated local AI on your PC.
       </p>
 
-      <!-- Stack Tags -->
-      <div class="flex flex-wrap items-center justify-center gap-2 pt-2">
-        <span class="px-3 py-1 rounded-full bg-slate-900 border border-slate-800 text-xs font-medium text-slate-300 flex items-center gap-1.5">
-          <i data-lucide="radio" class="w-3.5 h-3.5 text-cyan-400"></i> WebSockets
-        </span>
-        <span class="px-3 py-1 rounded-full bg-slate-900 border border-slate-800 text-xs font-medium text-slate-300 flex items-center gap-1.5">
-          <i data-lucide="sparkles" class="w-3.5 h-3.5 text-violet-400"></i> WebGL Shaders
-        </span>
-        <span class="px-3 py-1 rounded-full bg-slate-900 border border-slate-800 text-xs font-medium text-slate-300 flex items-center gap-1.5">
-          <i data-lucide="hard-drive" class="w-3.5 h-3.5 text-emerald-400"></i> Local LLMs (Ollama)
-        </span>
-        <span class="px-3 py-1 rounded-full bg-slate-900 border border-slate-800 text-xs font-medium text-slate-300 flex items-center gap-1.5">
-          <i data-lucide="code-2" class="w-3.5 h-3.5 text-amber-400"></i> TypeScript & Node.js
-        </span>
-        <span class="px-3 py-1 rounded-full bg-slate-900 border border-slate-800 text-xs font-medium text-slate-300 flex items-center gap-1.5">
-          <i data-lucide="shield-check" class="w-3.5 h-3.5 text-sky-400"></i> Tauri Desktop Core
-        </span>
+      <div class="final-launch-buttons">
+        <a href="/desktop.html" class="primary-stark-btn">
+          <i data-lucide="power" style="width: 20px; height: 20px;"></i>
+          <span>Launch J.A.R.V.I.S. Neural Console</span>
+          <span style="font-size: 1.2rem;">→</span>
+        </a>
+
+        <a href="https://github.com/Naveenbnnavee/J.A.R.V.I.S.git" target="_blank" rel="noopener noreferrer" class="secondary-stark-btn">
+          <i data-lucide="github" style="width: 18px; height: 18px;"></i>
+          <span>GitHub Repository</span>
+          <i data-lucide="external-link" style="width: 14px; height: 14px;"></i>
+        </a>
+      </div>
+
+      <!-- Quickstart Box -->
+      <div class="terminal-quickstart-box">
+        <div style="display: flex; align-items: center; gap: 10px; overflow: hidden;">
+          <span style="color: var(--stark-amber);">$</span>
+          <code style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">git clone https://github.com/Naveenbnnavee/J.A.R.V.I.S.git &amp;&amp; npm install &amp;&amp; npm run tauri dev</code>
+        </div>
+        <button class="copy-icon-btn" onclick="copyCmd('git clone https://github.com/Naveenbnnavee/J.A.R.V.I.S.git && npm install && npm run tauri dev', this)" title="Copy CLI Command">
+          <i data-lucide="copy" style="width: 16px; height: 16px;"></i>
+        </button>
       </div>
     </section>
 
-    <!-- Metrics Grid -->
-    <section id="metrics" class="grid grid-cols-1 md:grid-cols-3 gap-6">
-      <div class="glass-panel p-6 rounded-2xl relative overflow-hidden group">
-        <div class="flex items-center justify-between mb-4">
-          <span class="text-xs font-mono uppercase tracking-wider text-cyan-400">Loop Latency</span>
-          <div class="w-8 h-8 rounded-lg bg-cyan-500/10 flex items-center justify-center text-cyan-400">
-            <i data-lucide="zap" class="w-4 h-4"></i>
-          </div>
-        </div>
-        <div class="text-3xl font-black text-white font-mono tracking-tight">&lt; 1.2s</div>
-        <p class="text-xs text-slate-400 mt-2">End-to-end voice-to-voice turn around time with chunked audio streaming.</p>
-        <div class="mt-4 h-1 w-full bg-slate-800 rounded-full overflow-hidden">
-          <div class="h-full bg-cyan-400 w-4/5 rounded-full"></div>
-        </div>
-      </div>
-
-      <div class="glass-panel p-6 rounded-2xl relative overflow-hidden group">
-        <div class="flex items-center justify-between mb-4">
-          <span class="text-xs font-mono uppercase tracking-wider text-violet-400">Privacy & Routing</span>
-          <div class="w-8 h-8 rounded-lg bg-violet-500/10 flex items-center justify-center text-violet-400">
-            <i data-lucide="shield" class="w-4 h-4"></i>
-          </div>
-        </div>
-        <div class="text-3xl font-black text-white font-mono tracking-tight">100% Local</div>
-        <p class="text-xs text-slate-400 mt-2">Zero third-party network calls for system control, file queries, and sensitive data.</p>
-        <div class="mt-4 h-1 w-full bg-slate-800 rounded-full overflow-hidden">
-          <div class="h-full bg-violet-400 w-full rounded-full"></div>
-        </div>
-      </div>
-
-      <div class="glass-panel p-6 rounded-2xl relative overflow-hidden group">
-        <div class="flex items-center justify-between mb-4">
-          <span class="text-xs font-mono uppercase tracking-wider text-emerald-400">Canvas Rendering</span>
-          <div class="w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center text-emerald-400">
-            <i data-lucide="gauge" class="w-4 h-4"></i>
-          </div>
-        </div>
-        <div class="text-3xl font-black text-white font-mono tracking-tight">60 FPS</div>
-        <p class="text-xs text-slate-400 mt-2">Hardware-accelerated reactive Arc-Reactor visualizer shader loop.</p>
-        <div class="mt-4 h-1 w-full bg-slate-800 rounded-full overflow-hidden">
-          <div class="h-full bg-emerald-400 w-11/12 rounded-full"></div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Special Presentation Element: High-Res Screenshot Lightbox Grid -->
-    <section id="screenshots" class="space-y-6">
-      <div class="flex items-end justify-between border-b border-slate-800 pb-4">
-        <div>
-          <div class="text-xs font-mono text-cyan-400 uppercase tracking-widest">Visual Inspection</div>
-          <h2 class="text-2xl font-bold text-white mt-1">Desktop Interface & HUD Telemetry</h2>
-        </div>
-        <span class="text-xs text-slate-400 font-mono">Click any screen to inspect full resolution</span>
-      </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <!-- Screenshot 1: Idle & Arc Reactor -->
-        <div class="glass-panel rounded-2xl p-3 cursor-pointer group transition-all transform hover:-translate-y-1.5" onclick="openLightbox('assets/screenshots/jarvis_visualizer_idle.png', 'Audio Visualizer & Idle State (Radial Arc-Reactor HUD)')">
-          <div class="relative rounded-xl overflow-hidden aspect-video bg-slate-900 border border-slate-800">
-            <img src="assets/screenshots/jarvis_visualizer_idle.png" alt="Audio Visualizer and Idle State with Radial Arc-Reactor HUD" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-            <div class="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-transparent opacity-60 group-hover:opacity-30 transition-opacity"></div>
-            <div class="absolute bottom-3 left-3 right-3 flex items-center justify-between text-xs">
-              <span class="bg-cyan-950/80 border border-cyan-800/80 px-2 py-0.5 rounded text-cyan-300 font-mono">Idle Arc Reactor</span>
-              <span class="text-slate-400 flex items-center gap-1"><i data-lucide="maximize-2" class="w-3.5 h-3.5"></i> Inspect</span>
-            </div>
-          </div>
-          <div class="p-3">
-            <h3 class="font-semibold text-sm text-slate-100">Audio Visualizer & Idle State</h3>
-            <p class="text-xs text-slate-400 mt-1">Spatial radial HUD monitoring system thermals, network latency, and memory footprint.</p>
-          </div>
-        </div>
-
-        <!-- Screenshot 2: Streaming Voice Response -->
-        <div class="glass-panel rounded-2xl p-3 cursor-pointer group transition-all transform hover:-translate-y-1.5" onclick="openLightbox('assets/screenshots/jarvis_streaming_voice.png', 'Streaming Voice Response & Latency Waterfall')">
-          <div class="relative rounded-xl overflow-hidden aspect-video bg-slate-900 border border-slate-800">
-            <img src="assets/screenshots/jarvis_streaming_voice.png" alt="Streaming Voice Response and Latency Waterfall" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-            <div class="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-transparent opacity-60 group-hover:opacity-30 transition-opacity"></div>
-            <div class="absolute bottom-3 left-3 right-3 flex items-center justify-between text-xs">
-              <span class="bg-violet-950/80 border border-violet-800/80 px-2 py-0.5 rounded text-violet-300 font-mono">Live Dialogue Mode</span>
-              <span class="text-slate-400 flex items-center gap-1"><i data-lucide="maximize-2" class="w-3.5 h-3.5"></i> Inspect</span>
-            </div>
-          </div>
-          <div class="p-3">
-            <h3 class="font-semibold text-sm text-slate-100">Streaming Voice Response & Console</h3>
-            <p class="text-xs text-slate-400 mt-1">Chunked bidirectional audio loop with integrated live chat fallback & memory retrieval.</p>
-          </div>
-        </div>
-
-        <!-- Screenshot 3: Intent Routing Dashboard -->
-        <div class="glass-panel rounded-2xl p-3 cursor-pointer group transition-all transform hover:-translate-y-1.5" onclick="openLightbox('assets/screenshots/jarvis_intent_routing.png', 'Dynamic Intent Routing Dashboard & Pipeline Drawer')">
-          <div class="relative rounded-xl overflow-hidden aspect-video bg-slate-900 border border-slate-800">
-            <img src="assets/screenshots/jarvis_intent_routing.png" alt="Dynamic Intent Routing Dashboard and Pipeline Drawer" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-            <div class="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-transparent opacity-60 group-hover:opacity-30 transition-opacity"></div>
-            <div class="absolute bottom-3 left-3 right-3 flex items-center justify-between text-xs">
-              <span class="bg-emerald-950/80 border border-emerald-800/80 px-2 py-0.5 rounded text-emerald-300 font-mono">Tools & Routing</span>
-              <span class="text-slate-400 flex items-center gap-1"><i data-lucide="maximize-2" class="w-3.5 h-3.5"></i> Inspect</span>
-            </div>
-          </div>
-          <div class="p-3">
-            <h3 class="font-semibold text-sm text-slate-100">Dynamic Intent Routing Dashboard</h3>
-            <p class="text-xs text-slate-400 mt-1">Drawer telemetry exposing automated intent dispatch, YouTube automation, and local tool pipelines.</p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Architecture Deep Dive Flow Diagram -->
-    <section id="architecture" class="space-y-6">
-      <div class="border-b border-slate-800 pb-4">
-        <div class="text-xs font-mono text-cyan-400 uppercase tracking-widest">System Internals</div>
-        <h2 class="text-2xl font-bold text-white mt-1">End-to-End Pipeline Architecture</h2>
-      </div>
-
-      <div class="glass-panel p-8 rounded-2xl space-y-6">
-        <div class="grid grid-cols-1 md:grid-cols-5 gap-4 relative">
-          <!-- Step 1 -->
-          <div class="p-4 rounded-xl bg-slate-900/90 border border-slate-800 space-y-2">
-            <div class="w-8 h-8 rounded-lg bg-cyan-500/10 text-cyan-400 flex items-center justify-center font-mono font-bold text-xs">01</div>
-            <h4 class="font-semibold text-sm text-slate-100">Audio Ingestion</h4>
-            <p class="text-xs text-slate-400">Microphone stream into Silero VAD. 16kHz PCM ring buffer prevents audio clipping.</p>
-            <span class="inline-block text-[10px] font-mono text-cyan-400 bg-cyan-950/50 px-2 py-0.5 rounded">Silero VAD / Opus</span>
-          </div>
-
-          <!-- Step 2 -->
-          <div class="p-4 rounded-xl bg-slate-900/90 border border-slate-800 space-y-2">
-            <div class="w-8 h-8 rounded-lg bg-sky-500/10 text-sky-400 flex items-center justify-center font-mono font-bold text-xs">02</div>
-            <h4 class="font-semibold text-sm text-slate-100">Streaming STT</h4>
-            <p class="text-xs text-slate-400">Sub-300ms speech-to-text token streaming with interim hypothesis correction.</p>
-            <span class="inline-block text-[10px] font-mono text-sky-400 bg-sky-950/50 px-2 py-0.5 rounded">Faster-Whisper / WS</span>
-          </div>
-
-          <!-- Step 3 -->
-          <div class="p-4 rounded-xl bg-slate-900/90 border border-slate-800 space-y-2 border-cyan-500/40 glow-cyan">
-            <div class="w-8 h-8 rounded-lg bg-violet-500/10 text-violet-400 flex items-center justify-center font-mono font-bold text-xs">03</div>
-            <h4 class="font-semibold text-sm text-slate-100">Intent Router</h4>
-            <p class="text-xs text-slate-400">Classifies prompt: Local Ollama (system ops) vs Cloud LLM (creative reasoning).</p>
-            <span class="inline-block text-[10px] font-mono text-violet-400 bg-violet-950/50 px-2 py-0.5 rounded">Adaptive Classifier</span>
-          </div>
-
-          <!-- Step 4 -->
-          <div class="p-4 rounded-xl bg-slate-900/90 border border-slate-800 space-y-2">
-            <div class="w-8 h-8 rounded-lg bg-pink-500/10 text-pink-400 flex items-center justify-center font-mono font-bold text-xs">04</div>
-            <h4 class="font-semibold text-sm text-slate-100">Vector Memory</h4>
-            <p class="text-xs text-slate-400">Retrieves context from embedded semantic memory store before LLM execution.</p>
-            <span class="inline-block text-[10px] font-mono text-pink-400 bg-pink-950/50 px-2 py-0.5 rounded">ChromaDB / HNSW</span>
-          </div>
-
-          <!-- Step 5 -->
-          <div class="p-4 rounded-xl bg-slate-900/90 border border-slate-800 space-y-2">
-            <div class="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-400 flex items-center justify-center font-mono font-bold text-xs">05</div>
-            <h4 class="font-semibold text-sm text-slate-100">Synthesis & HUD</h4>
-            <p class="text-xs text-slate-400">Synthesizes voice tokens while driving reactive 60fps WebGL visualizer shaders.</p>
-            <span class="inline-block text-[10px] font-mono text-emerald-400 bg-emerald-950/50 px-2 py-0.5 rounded">WebGL / TTS Audio</span>
-          </div>
-        </div>
-
-        <div class="bg-slate-950/70 border border-slate-800/80 rounded-xl p-4 text-xs font-mono text-slate-400 flex flex-wrap items-center justify-between gap-4">
-          <div class="flex items-center gap-2">
-            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-            <span>Zero Remote Telemetry &bull; Desktop Tauri Sandbox &bull; Hardware Accelerated</span>
-          </div>
-          <div class="text-slate-500">Security Invariant: No raw audio persisted unencrypted</div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Terminal-Style Local Quickstart -->
-    <section id="quickstart" class="space-y-6">
-      <div class="border-b border-slate-800 pb-4">
-        <div class="text-xs font-mono text-cyan-400 uppercase tracking-widest">Developer Onboarding</div>
-        <h2 class="text-2xl font-bold text-white mt-1">Local Quickstart & Execution</h2>
-      </div>
-
-      <div class="glass-panel rounded-2xl overflow-hidden border border-slate-800">
-        <!-- Terminal Header -->
-        <div class="bg-slate-900/90 px-4 py-3 border-b border-slate-800 flex items-center justify-between">
-          <div class="flex items-center gap-2">
-            <span class="w-3 h-3 rounded-full bg-red-500/80"></span>
-            <span class="w-3 h-3 rounded-full bg-yellow-500/80"></span>
-            <span class="w-3 h-3 rounded-full bg-green-500/80"></span>
-            <span class="ml-2 font-mono text-xs text-slate-400">powershell / bash — jarvis-assistant</span>
-          </div>
-          <span class="text-[11px] font-mono text-slate-500">Node v20+ / Rust / Tauri CLI</span>
-        </div>
-
-        <!-- Terminal Body -->
-        <div class="p-6 font-mono text-sm space-y-4 bg-slate-950/95 overflow-x-auto">
-          <div>
-            <span class="text-slate-500"># 1. Clone repository from GitHub into your local workspace</span>
-            <div class="flex items-center justify-between text-cyan-300 mt-1">
-              <code>git clone https://github.com/Naveenbnnavee/J.A.R.V.I.S.git &amp;&amp; cd J.A.R.V.I.S</code>
-              <button onclick="copyCmd('git clone https://github.com/Naveenbnnavee/J.A.R.V.I.S.git &amp;&amp; cd J.A.R.V.I.S', this)" class="text-xs text-slate-500 hover:text-cyan-400 p-1 rounded" title="Copy clone command"><i data-lucide="copy" class="w-4 h-4"></i></button>
-            </div>
-            <div class="mt-2 text-xs">
-              <span class="text-slate-500"># Or pull latest changes into your directory if already cloned:</span>
-              <div class="flex items-center justify-between text-cyan-300 mt-1">
-                <code>git pull origin main</code>
-                <button onclick="copyCmd('git pull origin main', this)" class="text-xs text-slate-500 hover:text-cyan-400 p-1 rounded" title="Copy pull command"><i data-lucide="copy" class="w-4 h-4"></i></button>
-              </div>
-            </div>
-          </div>
-
-          <div>
-            <span class="text-slate-500"># 2. Install frontend &amp; backend dependencies</span>
-            <div class="flex items-center justify-between text-cyan-300 mt-1">
-              <code>npm install ; cd backend ; npm install ; cd ..</code>
-              <button onclick="copyCmd('npm install ; cd backend ; npm install ; cd ..', this)" class="text-xs text-slate-500 hover:text-cyan-400 p-1 rounded" title="Copy install command"><i data-lucide="copy" class="w-4 h-4"></i></button>
-            </div>
-          </div>
-
-          <div>
-            <span class="text-slate-500"># 3. Launch the desktop client with hot-reload</span>
-            <div class="flex items-center justify-between text-cyan-300 mt-1">
-              <code>npm run dev</code>
-              <button onclick="copyCmd('npm run dev', this)" class="text-xs text-slate-500 hover:text-cyan-400 p-1 rounded" title="Copy dev command"><i data-lucide="copy" class="w-4 h-4"></i></button>
-            </div>
-          </div>
-
-          <div>
-            <span class="text-slate-500"># 4. Optional: Run in standalone web mode for UI debugging</span>
-            <div class="flex items-center justify-between text-emerald-400 mt-1">
-              <code>npx vite --port 1420</code>
-              <button onclick="copyCmd('npx vite --port 1420', this)" class="text-xs text-slate-500 hover:text-cyan-400 p-1 rounded" title="Copy web preview command"><i data-lucide="copy" class="w-4 h-4"></i></button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Footer Note -->
-    <footer class="pt-8 border-t border-slate-800/80 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 gap-4">
-      <div>J.A.R.V.I.S. Production Showcase &bull; Standalone Portfolio Artifact</div>
-      <div class="font-mono">Status: Private Local Architecture (Screenshots Preserved)</div>
+    <!-- Footer -->
+    <footer class="stark-footer">
+      <div>J.A.R.V.I.S. Autonomous AI Assistant &bull; Architectural Portfolio Specification</div>
+      <div>Designed & Engineered by <span class="footer-highlight">Naveen</span> &bull; Tauri 2.0 &bull; Rust &bull; Ollama &bull; Faster-Whisper</div>
+      <div style="font-size: 0.7rem; color: var(--text-dim); margin-top: 5px;">STATUS: ALL SYSTEMS NOMINAL // LOCAL IPC OPERATIONAL</div>
     </footer>
 
   </main>
 
   <!-- Lightbox Modal -->
-  <div id="lightbox" class="fixed inset-0 z-50 bg-black/90 backdrop-blur-md hidden flex flex-col items-center justify-center p-4 sm:p-8" onclick="closeLightbox()">
-    <div class="max-w-5xl w-full bg-slate-900 border border-slate-700 rounded-2xl overflow-hidden shadow-2xl relative" onclick="event.stopPropagation()">
-      <div class="flex items-center justify-between p-4 border-b border-slate-800 bg-slate-950">
-        <h4 id="lightbox-caption" class="text-sm font-semibold text-slate-200 font-mono">Screenshot</h4>
-        <button onclick="closeLightbox()" class="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800 transition-colors">
-          <i data-lucide="x" class="w-5 h-5"></i>
+  <div id="lightbox" onclick="closeLightbox()">
+    <div class="lightbox-window" onclick="event.stopPropagation()">
+      <div class="lightbox-header">
+        <span id="lightbox-caption">Interface Preview</span>
+        <button class="lightbox-close-btn" onclick="closeLightbox()">
+          <i data-lucide="x" style="width: 18px; height: 18px;"></i>
         </button>
       </div>
-      <div class="p-2 bg-slate-950 flex items-center justify-center max-h-[75vh]">
-        <img id="lightbox-img" src="" alt="Full Resolution Screenshot" class="max-h-[72vh] w-auto object-contain rounded-lg" />
+      <div class="lightbox-body">
+        <img id="lightbox-img" src="" alt="Full Screen Inspection">
       </div>
     </div>
   </div>
 
   <!-- Toast Notification -->
-  <div id="toast" class="fixed bottom-6 right-6 z-50 transform translate-y-12 opacity-0 transition-all duration-300 pointer-events-none bg-slate-900/95 border border-cyan-500/50 text-cyan-300 px-4 py-2.5 rounded-xl shadow-2xl font-mono text-xs flex items-center gap-2 backdrop-blur-md">
-    <i data-lucide="check" class="w-4 h-4 text-emerald-400"></i>
-    <span id="toast-msg">Copied to clipboard</span>
+  <div id="toast">
+    <i data-lucide="check" style="width: 16px; height: 16px; color: #00ffaa;"></i>
+    <span id="toast-msg">Copied to clipboard!</span>
   </div>
 
   <script>
     lucide.createIcons();
 
+    // Interactive Arc Reactor State Toggle
+    let isSpeaking = false;
+    function toggleReactorState() {
+      isSpeaking = !isSpeaking;
+      const core = document.getElementById('plasma-core-el');
+      const text = document.getElementById('core-state-text');
+      const mode = document.getElementById('core-mode-text');
+
+      if (isSpeaking) {
+        core.style.background = 'radial-gradient(circle, #ffffff 0%, #ffb703 50%, rgba(255, 183, 3, 0.3) 100%)';
+        core.style.boxShadow = '0 0 60px #ffb703, 0 0 100px rgba(255, 183, 3, 0.5)';
+        text.innerText = 'ACTIVE';
+        text.style.color = '#ffb703';
+        mode.innerText = 'SPEAKING';
+        showToast('Jarvis Voice Synthesis Active (Gold Plasma)');
+      } else {
+        core.style.background = 'radial-gradient(circle, #ffffff 0%, var(--stark-cyan) 50%, rgba(0, 240, 255, 0.2) 100%)';
+        core.style.boxShadow = '0 0 50px var(--stark-cyan), 0 0 100px var(--stark-cyan-glow)';
+        text.innerText = 'ONLINE';
+        text.style.color = '#ffffff';
+        mode.innerText = 'LISTENING';
+        showToast('Jarvis VAD Listening Active (Stark Cyan)');
+      }
+    }
+
+    // Lightbox handlers
     function openLightbox(src, caption) {
       const modal = document.getElementById('lightbox');
       const img = document.getElementById('lightbox-img');
       const cap = document.getElementById('lightbox-caption');
+      if (!modal || !img || !cap) return;
       img.src = src;
       cap.innerText = caption;
-      modal.classList.remove('hidden');
+      modal.classList.add('active');
       document.body.style.overflow = 'hidden';
     }
 
     function closeLightbox() {
       const modal = document.getElementById('lightbox');
-      modal.classList.add('hidden');
+      if (!modal) return;
+      modal.classList.remove('active');
       document.body.style.overflow = 'auto';
     }
 
+    // Toast
     function showToast(msg) {
       const toast = document.getElementById('toast');
       const toastMsg = document.getElementById('toast-msg');
       if (!toast || !toastMsg) return;
       toastMsg.innerText = msg;
-      toast.classList.remove('translate-y-12', 'opacity-0');
-      toast.classList.add('translate-y-0', 'opacity-100');
-      clearTimeout(window._toastTimeout);
-      window._toastTimeout = setTimeout(() => {
-        toast.classList.remove('translate-y-0', 'opacity-100');
-        toast.classList.add('translate-y-12', 'opacity-0');
-      }, 2500);
+      toast.classList.add('active');
+      clearTimeout(window._toastTimer);
+      window._toastTimer = setTimeout(() => {
+        toast.classList.remove('active');
+      }, 2800);
     }
 
     function copyCmd(text, btn) {
       if (navigator.clipboard && navigator.clipboard.writeText) {
         navigator.clipboard.writeText(text).catch(() => {});
       }
-      showToast('Copied: ' + text);
+      showToast('Copied CLI Command to clipboard!');
     }
   </script>
 </body>
