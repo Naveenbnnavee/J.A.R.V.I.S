@@ -29,4 +29,12 @@ export default defineConfig(() => ({
       ignored: ["**/src-tauri/**", "**/backend/**", "**/jarvis-cloud/**"],
     },
   },
+  build: {
+    rollupOptions: {
+      input: {
+        main: "index.html",
+        desktop: "desktop.html",
+      },
+    },
+  },
 }));
