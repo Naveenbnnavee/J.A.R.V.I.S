@@ -71,18 +71,25 @@ Open `showcase.html` in any browser to inspect:
 ### Installation & Run
 
 ```bash
-# 1. Install frontend dependencies
+# 1. Clone repository from GitHub & enter project
+git clone https://github.com/Naveenbnnavee/J.A.R.V.I.S.git
+cd J.A.R.V.I.S
+
+# Or pull latest changes into your directory if already cloned:
+# git pull origin main
+
+# 2. Install frontend dependencies
 npm install
 
-# 2. Install backend worker dependencies
+# 3. Install backend worker dependencies
 cd backend
 npm install
 cd ..
 
-# 3. Launch desktop application in dev mode
+# 4. Launch desktop application in dev mode
 npm run dev
 
-# 4. Optional: Run web UI standalone
+# 5. Optional: Run web UI standalone
 npx vite --port 1420
 ```
 
