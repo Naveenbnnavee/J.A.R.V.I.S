@@ -192,11 +192,11 @@
       color: var(--stark-cyan);
     }
 
-    .launch-nav-btn {
-      background: linear-gradient(135deg, rgba(0, 240, 255, 0.2), rgba(0, 150, 255, 0.1));
-      border: 1px solid var(--stark-cyan);
+    .github-nav-btn {
+      background: rgba(0, 240, 255, 0.08);
+      border: 1px solid rgba(0, 240, 255, 0.35);
       color: #ffffff;
-      padding: 8px 18px;
+      padding: 7px 16px;
       border-radius: 6px;
       font-family: var(--font-mono);
       font-size: 0.8rem;
@@ -205,14 +205,14 @@
       align-items: center;
       gap: 8px;
       text-decoration: none;
-      box-shadow: 0 0 15px var(--stark-cyan-glow);
       transition: all 0.3s;
     }
 
-    .launch-nav-btn:hover {
+    .github-nav-btn:hover {
       background: var(--stark-cyan);
+      border-color: var(--stark-cyan);
       color: #02040a;
-      box-shadow: 0 0 25px var(--stark-cyan);
+      box-shadow: 0 0 20px var(--stark-cyan);
       transform: translateY(-2px);
     }
 
@@ -1095,9 +1095,10 @@
         <a href="#agents">Agents</a>
         <a href="#architecture">Architecture</a>
         <a href="#screenshots">Screenshots</a>
-        <a href="/desktop.html" class="launch-nav-btn">
-          <i data-lucide="power" style="width: 14px; height: 14px;"></i>
-          <span>Launch HUD →</span>
+        <a href="#quickstart">Quickstart</a>
+        <a href="https://github.com/Naveenbnnavee/J.A.R.V.I.S.git" target="_blank" rel="noopener noreferrer" class="github-nav-btn">
+          <i data-lucide="github" style="width: 14px; height: 14px;"></i>
+          <span>GitHub</span>
         </a>
       </div>
     </div>
@@ -1431,29 +1432,23 @@
       </div>
     </section>
 
-    <!-- FINAL SECTION: The Project Launch Button (Placed at the very end of the portfolio page) -->
-    <section class="final-launch-section">
+    <!-- FINAL SECTION: Native Repository & Quickstart (At the very end of the portfolio page) -->
+    <section class="final-launch-section" id="quickstart">
       <div class="final-launch-badge">
         <i data-lucide="terminal" style="width: 14px; height: 14px;"></i>
-        <span>TACTICAL LAUNCH INTERFACE</span>
+        <span>NATIVE TAURI 2.0 WORKSPACE</span>
       </div>
 
-      <h2 class="final-launch-title">Deploy & Experience J.A.R.V.I.S.</h2>
+      <h2 class="final-launch-title">Deploy &amp; Run J.A.R.V.I.S. Locally</h2>
       <p class="final-launch-desc">
-        Launch the live browser build of the desktop neural console, or clone the Tauri repository to run full native hardware-accelerated local AI on your PC.
+        J.A.R.V.I.S. is engineered as a high-performance native desktop AI assistant powered by Tauri 2.0, Rust, and local Ollama inference. Clone the repository and run the local IPC dev server directly on your machine.
       </p>
 
       <div class="final-launch-buttons">
-        <a href="/desktop.html" class="primary-stark-btn">
-          <i data-lucide="power" style="width: 20px; height: 20px;"></i>
-          <span>Launch J.A.R.V.I.S. Neural Console</span>
+        <a href="https://github.com/Naveenbnnavee/J.A.R.V.I.S.git" target="_blank" rel="noopener noreferrer" class="primary-stark-btn">
+          <i data-lucide="github" style="width: 20px; height: 20px;"></i>
+          <span>View Source &amp; Clone Repository</span>
           <span style="font-size: 1.2rem;">→</span>
-        </a>
-
-        <a href="https://github.com/Naveenbnnavee/J.A.R.V.I.S.git" target="_blank" rel="noopener noreferrer" class="secondary-stark-btn">
-          <i data-lucide="github" style="width: 18px; height: 18px;"></i>
-          <span>GitHub Repository</span>
-          <i data-lucide="external-link" style="width: 14px; height: 14px;"></i>
         </a>
       </div>
 

@@ -5,12 +5,86 @@
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>J.A.R.V.I.S. – Autonomous Desktop Neural Assistant</title>
+    <style>
+      body {
+        margin: 0;
+        background-color: #030712;
+        color: #e2e8f0;
+        font-family: system-ui, -apple-system, sans-serif;
+      }
+      .tauri-web-notice {
+        display: none;
+        min-height: 100vh;
+        align-items: center;
+        justify-content: center;
+        padding: 24px;
+        text-align: center;
+        box-sizing: border-box;
+      }
+      .tauri-web-card {
+        max-width: 520px;
+        background: rgba(15, 23, 42, 0.95);
+        border: 1px solid rgba(0, 240, 255, 0.4);
+        box-shadow: 0 0 35px rgba(0, 240, 255, 0.2);
+        border-radius: 12px;
+        padding: 36px 28px;
+      }
+      .tauri-web-card h2 {
+        color: #00f0ff;
+        margin-top: 0;
+        font-size: 1.4rem;
+        letter-spacing: 0.05em;
+      }
+      .tauri-web-card p {
+        color: #94a3b8;
+        font-size: 0.95rem;
+        line-height: 1.6;
+        margin: 16px 0 24px;
+      }
+      .tauri-back-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: #00f0ff;
+        color: #02040a;
+        font-weight: 600;
+        padding: 10px 22px;
+        border-radius: 6px;
+        text-decoration: none;
+        transition: transform 0.2s, box-shadow 0.2s;
+      }
+      .tauri-back-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 0 20px rgba(0, 240, 255, 0.6);
+      }
+    </style>
+    <script>
+      // Detect if running inside native Tauri runtime or a web browser
+      window.addEventListener('DOMContentLoaded', () => {
+        const isTauri = Boolean(window.__TAURI_INTERNALS__ || window.__TAURI_IPC__ || window.__TAURI__);
+        if (!isTauri) {
+          const notice = document.getElementById('tauri-web-notice');
+          if (notice) notice.style.display = 'flex';
+          const root = document.getElementById('root');
+          if (root) root.style.display = 'none';
+        }
+      });
+    </script>
     <script src="https://cdn.jsdelivr.net/npm/onnxruntime-web/dist/ort.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@ricky0123/vad-web@0.0.19/dist/bundle.min.js"></script>
     <script type="module" src="/src/main.tsx"></script>
   </head>
 
   <body>
+    <div id="tauri-web-notice" class="tauri-web-notice">
+      <div class="tauri-web-card">
+        <h2>⚡ Native Desktop Runtime Required</h2>
+        <p>
+          The J.A.R.V.I.S. Neural Console requires the native <strong>Tauri 2.0 &amp; Rust</strong> runtime with direct hardware IPC. It cannot execute in a standalone web browser.
+        </p>
+        <a href="/" class="tauri-back-btn">← Return to Architecture Showcase</a>
+      </div>
+    </div>
     <div id="root"></div>
   </body>
 </html>
