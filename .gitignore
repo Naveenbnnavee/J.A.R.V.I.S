@@ -19,6 +19,7 @@ build/
 out/
 target/
 src-tauri/target/
+*.tsbuildinfo
 
 # Python caches and virtual environments
 __pycache__/
